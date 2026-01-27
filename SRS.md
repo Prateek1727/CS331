@@ -1,5 +1,5 @@
 # Software Requirements Specification (SRS)
-**Project:**AI-based Customer Support Automation Platform with Digital Image Forensics
+Project: AI-based Customer Support Automation Platform with Digital Image Forensics
 
 ## 1. Abstract
 The rapid adoption of Generative AI has introduced "Adversarial Refund Fraud" in the E-Commerce and Food Delivery sectors. VeriSupport is a novel Customer Support Automation Platform that integrates Multimodal Large Language Models (LLMs) with Digital Image Forensics. It acts as an "Active Defense" mechanism, utilizing Error Level Analysis (ELA), Metadata Scrutiny, and Vision-Language reasoning to autonomously verify the physical integrity of user claims in real-time. The goal is to reduce refund processing latency for genuine customers while neutralizing AI-generated fraud.
