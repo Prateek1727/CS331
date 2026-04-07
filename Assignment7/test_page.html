@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 7 - BLL API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .test-section {
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            border-left-color: #28a745;
+        }
+        
+        .error {
+            border-left-color: #dc3545;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Assignment 7 - BLL API Tester</h1>
+        
+        <div class="card">
+            <h2>Server Status <span id="serverStatus" class="status offline">Checking...</span></h2>
+            <button onclick="checkHealth()">Check Server Health</button>
+            <div id="healthResult" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="card">
+            <h2>1. Decision Engine - Calculate Trust Score</h2>
+            <div class="test-section">
+                <label>Metadata Score (0-1):</label>
+                <input type="number" id="metadataScore" value="0.85" step="0.01" min="0" max="1">
+                
+                <label>ELA Score (0-1):</label>
+                <input type="number" id="elaScore" value="0.78" step="0.01" min="0" max="1">
+                
+                <label>AI Score (0-1):</label>
+                <input type="number" id="aiScore" value="0.92" step="0.01" min="0" max="1">
+                
+                <label>Order Amount ($):</label>
+                <input type="number" id="orderAmount" value="45.99" step="0.01" min="0">
+                
+                <button onclick="calculateDecision()">Calculate Decision</button>
+                <div id="decisionResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>2. User Management - Register User</h2>
+            <div class="test-section">
+                <label>Username:</label>
+                <input type="text" id="username" value="john_doe">
+                
+                <label>Email:</label>
+                <input type="email" id="email" value="john@example.com">
+                
+                <label>Password:</label>
+                <input type="password" id="password" value="SecurePass123!">
+                
+                <label>Phone:</label>
+                <input type="text" id="phone" value="1234567890">
+                
+                <button onclick="registerUser()">Register User</button>
+                <div id="registerResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>3. Quick Tests</h2>
+            <button onclick="getUserProfile()">Get User Profile</button>
+            <button onclick="getNotificationHistory()">Get Notification History</button>
+            <button onclick="getDecisionStats()">Get Decision Statistics</button>
+            <button onclick="testDisputeValidation()">Test Dispute Validation</button>
+            <div id="quickTestResult" class="result" style="display:none;"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        
+        // Check server health on load
+        window.onload = function() {
+            checkHealth();
+        };
+        
+        async function checkHealth() {
+            const statusEl = document.getElementById('serverStatus');
+            const resultEl = document.getElementById('healthResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                statusEl.textContent = 'Online';
+                statusEl.className = 'status online';
+                
+                resultEl.textContent = JSON.stringify(data, null, 2);
+                resultEl.className = 'result success';
+                resultEl.style.display = 'block';
+            } catch (error) {
+                statusEl.textContent = 'Offline';
+                statusEl.className = 'status offline';
+                
+                resultEl.textContent = 'Error: Cannot connect to server. Make sure the Flask app is running on port 5000.';
+                resultEl.className = 'result error';
+                resultEl.style.display = 'block';
+            }
+        }
+        
+        async function calculateDecision() {
+            const resultEl = document.getElementById('decisionResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            const data = {
+                metadata_score: parseFloat(document.getElementById('metadataScore').value),
+                ela_score: parseFloat(document.getElementById('elaScore').value),
+                ai_score: parseFloat(document.getElementById('aiScore').value),
+                order_amount: parseFloat(document.getElementById('orderAmount').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/decision/calculate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+        
+        async function registerUser() {
+            const resultEl = document.getElementById('registerResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            const data = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/user/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+        
+        async function getUserProfile() {
+            const resultEl = document.getElementById('quickTestResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/user/profile/USER-001`);
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = 'result success';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+        
+        async function getNotificationHistory() {
+            const resultEl = document.getElementById('quickTestResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/notification/history/USER-001`);
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = 'result success';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+        
+        async function getDecisionStats() {
+            const resultEl = document.getElementById('quickTestResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/decision/statistics`);
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = 'result success';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+        
+        async function testDisputeValidation() {
+            const resultEl = document.getElementById('quickTestResult');
+            resultEl.textContent = 'Loading...';
+            resultEl.style.display = 'block';
+            
+            const data = {
+                order_id: 'ORD-12345',
+                amount: 45.99,
+                description: 'Food was cold and had hair in it',
+                restaurant: 'Test Restaurant',
+                image_data: 'fake_image_data'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/dispute/validate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                resultEl.textContent = JSON.stringify(result, null, 2);
+                resultEl.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+                resultEl.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
