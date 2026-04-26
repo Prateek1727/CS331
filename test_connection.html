@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connection Test</title>
+    <style>
+        body { font-family: Arial; padding: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 10px 5px; }
+        button:hover { background: #2563eb; }
+        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 6px; white-space: pre-wrap; }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+        h1 { color: #1f2937; }
+        h3 { color: #4b5563; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Backend Connection Test</h1>
+        <p>Test if your frontend can connect to the backend API</p>
+        
+        <h3>Test 1: Backend Health Check</h3>
+        <button onclick="testBackend()">Test Backend Connection</button>
+        <div id="backend-result" class="result" style="display:none;"></div>
+        
+        <h3>Test 2: Get Tickets</h3>
+        <button onclick="testGetTickets()">Fetch Tickets</button>
+        <div id="tickets-result" class="result" style="display:none;"></div>
+        
+        <h3>Test 3: Create Test Ticket</h3>
+        <button onclick="testCreateTicket()">Create Test Ticket</button>
+        <div id="create-result" class="result" style="display:none;"></div>
+        
+        <h3>Test 4: Create Ticket with Image</h3>
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="testCreateWithImage()">Upload Test Image</button>
+        <div id="image-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+
+        async function testBackend() {
+            const result = document.getElementById('backend-result');
+            result.style.display = 'block';
+            result.textContent = 'Testing...';
+            result.className = 'result';
+            
+            try {
+                const response = await fetch('http://localhost:8000/');
+                const data = await response.json();
+                result.className = 'result success';
+                result.textContent = '✅ SUCCESS!\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = '❌ ERROR!\n\n' + error.message + '\n\nMake sure backend is running on port 8000';
+            }
+        }
+
+        async function testGetTickets() {
+            const result = document.getElementById('tickets-result');
+            result.style.display = 'block';
+            result.textContent = 'Fetching tickets...';
+            result.className = 'result';
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets`);
+                const data = await response.json();
+                result.className = 'result success';
+                result.textContent = `✅ SUCCESS! Found ${data.length} tickets\n\n` + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = '❌ ERROR!\n\n' + error.message;
+            }
+        }
+
+        async function testCreateTicket() {
+            const result = document.getElementById('create-result');
+            result.style.display = 'block';
+            result.textContent = 'Creating ticket...';
+            result.className = 'result';
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        channel: 'web',
+                        customer_name: 'Test User',
+                        customer_email: 'test@example.com',
+                        subject: 'Test from HTML',
+                        message: 'Testing ticket creation',
+                        hasImage: false
+                    })
+                });
+                const data = await response.json();
+                result.className = 'result success';
+                result.textContent = '✅ SUCCESS!\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = '❌ ERROR!\n\n' + error.message;
+            }
+        }
+
+        async function testCreateWithImage() {
+            const result = document.getElementById('image-result');
+            const fileInput = document.getElementById('imageInput');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            result.style.display = 'block';
+            result.textContent = 'Uploading image and creating ticket...';
+            result.className = 'result';
+            
+            try {
+                const formData = new FormData();
+                formData.append('channel', 'web');
+                formData.append('customer_name', 'Test User');
+                formData.append('customer_email', 'test@example.com');
+                formData.append('subject', 'Test with image');
+                formData.append('message', 'Testing image upload');
+                formData.append('image', fileInput.files[0]);
+                
+                const response = await fetch(`${API_BASE}/tickets/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                result.className = 'result success';
+                result.textContent = '✅ SUCCESS!\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = '❌ ERROR!\n\n' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

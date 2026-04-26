@@ -1,0 +1,26 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+backend/venv/
+
+# Environment variables
+.env
+backend/.env
+
+# Database
+neuradesk.db
+*.sqlite3
+
+# Logs and outputs
+db_output.txt
+pip_error.txt
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
