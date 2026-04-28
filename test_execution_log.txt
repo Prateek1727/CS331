@@ -1,0 +1,40 @@
+======================================================================
+  VERISUPPORT - FRAUD ENGINE TEST SUITE EXECUTION
+  Date: 2026-04-28 09:38:43
+======================================================================
+
+test_tc01_legitimate_ticket_no_image (__main__.TestFraudEngine.test_tc01_legitimate_ticket_no_image)
+TC-01: A genuine customer with positive sentiment and no image should get high trust score ...   TC-01 PASS | Trust Score: 100 | Verdict: Low Risk
+ok
+test_tc02_high_tampering_fraud_image (__main__.TestFraudEngine.test_tc02_high_tampering_fraud_image)
+TC-02: An image with high tampering score should result in critical fraud detection ...   TC-02 PASS | Trust Score: 5 | Verdict: High Risk
+ok
+test_tc03_medium_tampering_image (__main__.TestFraudEngine.test_tc03_medium_tampering_image)
+TC-03: A medium tampering score should flag suspicious tampering ...   TC-03 PASS | Trust Score: 70 | Verdict: Medium Risk
+ok
+test_tc04_angry_sentiment_deduction (__main__.TestFraudEngine.test_tc04_angry_sentiment_deduction)
+TC-04: Angry sentiment should reduce trust score by 5 points ...   TC-04 PASS | Neutral Score: 100 | Angry Score: 95 | Diff: 5
+ok
+test_tc05_new_account_low_history (__main__.TestFraudEngine.test_tc05_new_account_low_history)
+TC-05: A Standard-tier customer with < 3 orders should get 15-point deduction ...   TC-05 PASS | Trust Score: 85 | Risk Factors: ['New account with low history']
+ok
+test_tc06_suspicious_keywords_detection (__main__.TestFraudEngine.test_tc06_suspicious_keywords_detection)
+TC-06: Entities containing 'sue' or 'lawyer' should trigger suspicious keyword flag ...   TC-06 PASS | Trust Score: 55 | Keyword Flags: ["Suspicious keyword: 'sue'", "Suspicious keyword: 'lawyer'"]
+ok
+test_tc07_metadata_inconsistency (__main__.TestFraudEngine.test_tc07_metadata_inconsistency)
+TC-07: Image with inconsistent metadata should get 15-point deduction ...   TC-07 PASS | Trust Score: 85 | Risk Factors: ['Image metadata shows editing software']
+ok
+test_tc08_worst_case_combined (__main__.TestFraudEngine.test_tc08_worst_case_combined)
+TC-08: All risk factors combined should produce minimum trust score ...   TC-08 PASS | Trust Score: 0 | Verdict: High Risk | Factors: 8
+ok
+test_tc09_minor_image_inconsistency (__main__.TestFraudEngine.test_tc09_minor_image_inconsistency)
+TC-09: Tampering score between 0.2 and 0.4 should flag minor inconsistencies ...   TC-09 PASS | Trust Score: 90 | Risk Factors: ['Minor image inconsistencies']
+ok
+test_tc10_perfect_score (__main__.TestFraudEngine.test_tc10_perfect_score)
+TC-10: A perfect customer with no risk signals should get score of 100 ...   TC-10 PASS | Trust Score: 100 | Verdict: Low Risk
+ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.001s
+
+OK
